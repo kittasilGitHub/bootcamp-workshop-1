@@ -3,6 +3,11 @@ import { Prompt } from "next/font/google";
 import "../globals.css";
 import Navbar from "@/components/navbar";
 
+// @next-codemod-ignore Cache Components adoption: this segment temporarily allows blocking.
+// Remove this opt-out after verifying the segment passes validation without it.
+// See: https://nextjs.org/docs/app/guides/migrating-to-cache-components
+export const instant = false;
+
 export const promptFont = Prompt({
   weight: ["400", "500", "700"],
   subsets: ["thai"],
