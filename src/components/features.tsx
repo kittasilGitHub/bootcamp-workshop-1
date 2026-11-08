@@ -1,12 +1,24 @@
-import { Product } from "@/types/product";
+// import { Product } from "@/types/product";
 
-async function fetchProducts(): Promise<Product[]> {
-  const response = await fetch("https://backend.codingthailand.com/v2/products");
-  if (!response.ok) {
-    throw new Error("เกิดข้อผิดพลาด ไม่สามารถดึงข้อมูลสินค้าได้");
-  }
-  const json: unknown = await response.json(); // Array
-  return json as Product[];
+import { prisma } from "@/lib/prisma";
+import { connection } from 'next/server';
+// async function fetchProducts(): Promise<Product[]> {
+//   const response = await fetch("https://backend.codingthailand.com/v2/products");
+//   if (!response.ok) {
+//     throw new Error("เกิดข้อผิดพลาด ไม่สามารถดึงข้อมูลสินค้าได้");
+//   }
+//   const json: unknown = await response.json(); // Array
+//   return json as Product[];
+// }
+
+
+async function fetchProducts() {
+  await connection();
+  const products = await prisma.products.findMany({
+    orderBy: { id: 'desc' },
+    include: { categories: true },
+  });
+  return products;
 }
 
 const Features = async () => {
@@ -24,11 +36,11 @@ const Features = async () => {
             key={product.id}
           >
             <div className="mb-5">
-              {product.barcode}
+              ID: {product.id} category: {product.categories?.name}
             </div>
-            <span className="font-medium text-lg">{product.category.name}</span>
+            <span className="font-medium text-lg">{product.name}</span>
             <p className="mt-1 text-[15px] text-foreground/80">
-              ชื่อสินค้า: {product.name} ราคา: {product.price}
+              ชื่อสินค้า: {product.description} ราคา: {product.price?.toFixed(2)}
             </p>
           </div>
         ))}
